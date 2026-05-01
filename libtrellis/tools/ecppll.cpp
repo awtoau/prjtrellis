@@ -37,7 +37,6 @@ f_out = f_vco / output
 #include <string>
 #include <boost/program_options.hpp>
 #include "version.hpp"
-#include "wasmexcept.hpp"
 using namespace std;
 
 enum class pll_mode{
@@ -506,7 +505,7 @@ void write_pll_config(const pll_params & params, const string &name, ofstream& f
     file << "        .PHASESTEP(phasestep),\n";
     if (params.xo2)
       file << "        .LOADREG(phaseloadreg),\n";
-    else 
+    else
       file << "        .PHASELOADREG(phaseloadreg),\n";
   }
   else
