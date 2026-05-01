@@ -41,7 +41,6 @@
 #include "Chip.hpp"
 #include "Database.hpp"
 #include "DatabasePath.hpp"
-#include "wasmexcept.hpp"
 
 using std::map;
 using std::pair;
@@ -74,7 +73,7 @@ void parse_hexfile_line(const char *filename, int linenr, vector<vector<bool>> &
 {
     vector<int> digits;
     bool reading_address = false;
-    
+
     for (char c : line) {
         if ('0' <= c && c <= '9')
             digits.push_back(c - '0');
@@ -194,7 +193,7 @@ int main(int argc, char **argv)
         }
 
         // If -s is provided: seed with the given value.
-        // If -s is not provided: seed with the PID and current time, which are unlikely 
+        // If -s is not provided: seed with the PID and current time, which are unlikely
         // to repeat simultaneously.
         uint32_t seed_nr;
         if (vm.count("seed")) {
@@ -272,7 +271,7 @@ int main(int argc, char **argv)
     vector<vector<bool>> to_hexfile;
 
     string line;
-    
+
     for (int i = 1, address = 0; getline(from_hexfile_f, line); i++)
         parse_hexfile_line(from_hexfile_n, i, from_hexfile, line, address);
 

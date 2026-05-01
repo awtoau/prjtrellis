@@ -4,7 +4,6 @@
 #include "Database.hpp"
 #include "DatabasePath.hpp"
 #include "version.hpp"
-#include "wasmexcept.hpp"
 #include <iostream>
 #include <boost/optional.hpp>
 #include <boost/program_options.hpp>

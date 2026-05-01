@@ -37,15 +37,6 @@ endif()
 
 find_package(Threads)
 
-if (WASI)
-    add_definitions(
-        -DBOOST_EXCEPTION_DISABLE
-        -DBOOST_NO_EXCEPTIONS)
-    if (NOT Threads_FOUND)
-        add_definitions(-DBOOST_NO_CXX11_HDR_MUTEX)
-    endif()
-endif()
-
 set(boost_libs filesystem program_options)
 if (Threads_FOUND)
     list(APPEND boost_libs thread)
