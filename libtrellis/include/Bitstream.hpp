@@ -63,6 +63,10 @@ public:
     // Deserialise a bitstream to a Chip
     Chip deserialise_chip();
     Chip deserialise_chip(boost::optional<uint32_t> idcode = boost::optional<uint32_t>());
+    Chip deserialise_chip(boost::optional<uint32_t> idcode, boost::optional<string> force_device);
+    // Force a specific device (for idcode-less MachXO2 bitstreams whose stream
+    // carries neither VERIFY_ID nor WRITE_INC_FRAME, e.g. compressed configs).
+    Chip deserialise_chip_forced(string force_device);
 
     // Write a Lattice .bit file (metadata + bitstream)
     void write_bit(ostream &out);

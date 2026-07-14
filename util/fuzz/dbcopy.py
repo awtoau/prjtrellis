@@ -90,6 +90,10 @@ def copy_enums_with_predicate(family, device, source, dest, predicate, force_sav
     for cenum in cenums:
         ed = srcdb.get_data_for_enum(cenum)
         if predicate(ed):
+            # Skip if all options have empty bit groups — source tile not yet fuzzed.
+            # Copying empty values would overwrite correct data already in dest.
+            if all(len(opt.bits) == 0 for opt in ed.options.values()):
+                continue
             dstdb.add_setting_enum(ed)
     if force_save:
         dstdb.save()

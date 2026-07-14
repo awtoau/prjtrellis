@@ -72,7 +72,8 @@ PYBIND11_MODULE (pytrellis, m)
             .def("write_bit", &Bitstream::write_bit_py)
             .def_readwrite("metadata", &Bitstream::metadata)
             .def_readwrite("data", &Bitstream::data)
-            .def("deserialise_chip", static_cast<Chip (Bitstream::*)()>(&Bitstream::deserialise_chip));
+            .def("deserialise_chip", static_cast<Chip (Bitstream::*)()>(&Bitstream::deserialise_chip))
+            .def("deserialise_chip_forced", &Bitstream::deserialise_chip_forced);
 
     class_<DeviceLocator>(m, "DeviceLocator")
             .def_readwrite("family", &DeviceLocator::family)

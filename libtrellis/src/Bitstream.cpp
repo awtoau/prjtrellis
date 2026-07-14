@@ -494,10 +494,18 @@ Bitstream Bitstream::read_bit(istream &in) {
 static const vector<uint8_t> preamble = {0xFF, 0xFF, 0xBD, 0xB3};
 
 Chip Bitstream::deserialise_chip() {
-    return deserialise_chip(boost::none);
+    return deserialise_chip(boost::none, boost::none);
 }
 
 Chip Bitstream::deserialise_chip(boost::optional<uint32_t> idcode) {
+    return deserialise_chip(idcode, boost::none);
+}
+
+Chip Bitstream::deserialise_chip_forced(string force_device) {
+    return deserialise_chip(boost::none, boost::make_optional(force_device));
+}
+
+Chip Bitstream::deserialise_chip(boost::optional<uint32_t> idcode, boost::optional<string> force_device) {
     cerr << "bitstream size: " << data.size() * 8 << " bits" << endl;
     BitstreamReadWriter rd(data);
     boost::optional<Chip> chip;
@@ -506,6 +514,14 @@ Chip Bitstream::deserialise_chip(boost::optional<uint32_t> idcode) {
 
     if (!found_preamble)
         throw BitstreamParseError("preamble not found in bitstream");
+
+    // Some MachXO2 configs (e.g. compressed vendor bitstreams) carry neither a
+    // VERIFY_ID nor a WRITE_INC_FRAME command, so the device can never be
+    // auto-identified from the stream. Allow the caller to force it.
+    if (force_device) {
+        chip = boost::make_optional(Chip(*force_device));
+        chip->metadata = metadata;
+    }
 
     uint16_t current_ebr = 0;
     int addr_in_ebr = 0;
@@ -792,8 +808,18 @@ Chip Bitstream::deserialise_chip(boost::optional<uint32_t> idcode) {
                 break;
             case BitstreamCommand::DUMMY:
                 break;
-            default: BITSTREAM_FATAL("unsupported command 0x" << hex << setw(2) << setfill('0') << int(cmd),
-                                     rd.get_offset());
+            default:
+                if (force_device && chip) {
+                    // Lenient mode: config frames + end CRC are already parsed,
+                    // so stop at the first trailing command Trellis doesn't
+                    // model (vendor bitstreams append device-specific tail cmds).
+                    BITSTREAM_NOTE("stopping at unsupported trailing command 0x"
+                                   << hex << setw(2) << setfill('0') << int(cmd)
+                                   << " (config already recovered)");
+                    return *chip;
+                }
+                BITSTREAM_FATAL("unsupported command 0x" << hex << setw(2) << setfill('0') << int(cmd),
+                                rd.get_offset());
         }
     }
     if (chip) {
