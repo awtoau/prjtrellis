@@ -14,6 +14,9 @@ ispTcl.tcl.*
 .ispTcl.lock
 work_*/
 
+#Build directories
+libtrellis/build*/
+
 #Editors and IDEs
 .*.d
 .*.swp
