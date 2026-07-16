@@ -36,7 +36,7 @@ PYBIND11_MAKE_OPAQUE(checksum_t)
 PYBIND11_MAKE_OPAQUE(map<checksum_t, LocationData>)
 PYBIND11_MAKE_OPAQUE(Location)
 
-PYBIND11_MODULE (pytrellis, m)
+PYBIND11_MODULE (pytrellis, m, py::mod_gil_not_used())
 {
     // Common Types
     py::bind_vector<vector<string>>(m, "StringVector");
